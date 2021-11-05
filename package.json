@@ -1,6 +1,6 @@
 {
   "name": "apex-trivia",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "My first Discord bot",
   "main": "main.js",
   "scripts": {
