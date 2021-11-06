@@ -1,3 +1,5 @@
+// Sent when the bot has been started and is ready to respond to commands
+
 module.exports = {
     name: 'ready',
     once: true,

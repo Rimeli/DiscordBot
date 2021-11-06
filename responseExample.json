@@ -1,0 +1,17 @@
+{
+    "response_code": 0,
+    "results": [
+        {
+            "category": "Entertainment: Video Games",
+            "type": "multiple",
+            "difficulty": "easy",
+            "question": "What is the homeworld of the Elites from Halo?",
+            "correct_answer": "Sanghelios",
+            "incorrect_answers": [
+                "Te",
+                "Doisac",
+                "Eayn"
+            ]
+        }
+    ]
+}
