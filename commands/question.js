@@ -72,14 +72,14 @@ function createAnswerButtons(jsonQuestion) {
 
     // Fill and shuffle the answer array
     answerArray.push(results.correct_answer);
-    results.incorrect_answers.forEach(function(answer) {
+    results.incorrect_answers.forEach(function (answer) {
         answerArray.push(answer);
     });
     shuffleArray(answerArray);
 
     // Creat a button for each answer
     const buttonArray = [];
-    answerArray.forEach(function(answer) {
+    answerArray.forEach(function (answer) {
         buttonArray.push(new MessageButton().setCustomId(answer).setLabel(answer).setStyle('PRIMARY'));
     });
 
@@ -98,4 +98,4 @@ function shuffleArray(array) {
     }
 
     return array;
-  }
+}
