@@ -13,7 +13,7 @@ module.exports = {
         interaction.deferReply();
 
         // Get the question
-        var jsonQuestion = await getQuestion();
+        let jsonQuestion = await getQuestion();
         if (jsonQuestion === '{}') {
             interaction.editReply('Question fetching error!');
             return;
@@ -26,18 +26,25 @@ module.exports = {
         interaction.channel.send({ content: question, components: [answerButtons] });
 
         // Wait and collect all answer buttons click
+        const usersAnswer = [];
         const questionTimeout = 10000;
         const collector = interaction.channel.createMessageComponentCollector({ componentType: 'BUTTON', time: questionTimeout });
         collector.on('collect', i => {
-            i.reply({ content: `You clicked on the ${i.customId} button`, ephemeral: true });
+            usersAnswer.push(createUserAnswer(i));
+            i.reply({ content: `Your answer ${i.customId} has been registered!`, ephemeral: true });
         });
 
-        collector.on('end', collected => {
-            console.log(`Collected ${collected.size} interactions.`);
+        let response = `The correct answer was ${correctAnswer}!`;
+        collector.on('end', () => {
+            usersAnswer.forEach(function (userAnswer) {
+                if (userAnswer.answer === correctAnswer) {
+                    response = response.concat('\n', `<@${userAnswer.id}> found the correct answer, congratulation!`);
+                }
+            });
         });
 
         await wait(questionTimeout);
-        interaction.editReply(`The answer was ${correctAnswer}!`);
+        interaction.editReply(response);
     }
 };
 
@@ -86,7 +93,7 @@ function createAnswerButtons(jsonQuestion) {
     return new MessageActionRow().addComponents(buttonArray);
 }
 
-// Unbiased shuffle algorithm is the Fisher-Yates (aka Knuth) Shuffle.
+// Unbiased shuffle algorithm (the Fisher-Yates (aka Knuth) Shuffle)
 function shuffleArray(array) {
     let currentIndex = array.length;
     let randomIndex;
@@ -98,4 +105,9 @@ function shuffleArray(array) {
     }
 
     return array;
+}
+
+// Create an user answer object from an answer button click
+function createUserAnswer(interaction) {
+    return { id: interaction.user.id, answer: interaction.customId };
 }
