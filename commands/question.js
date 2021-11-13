@@ -18,8 +18,11 @@ module.exports = {
             interaction.editReply('Question fetching error!');
             return;
         }
-        const question = jsonQuestion.results[0].question;
-        const correctAnswer = jsonQuestion.results[0].correct_answer;
+        const question = Buffer.from(jsonQuestion.results[0].question, 'base64').toString('utf-8');
+        const correctAnswer = Buffer.from(jsonQuestion.results[0].correct_answer, 'base64').toString('utf-8');
+
+        // Debug
+        // console.log(`The answer is ${correctAnswer}`);
 
         // Create the answer buttons and send the question alongside
         const answerButtons = createAnswerButtons(jsonQuestion);
@@ -51,14 +54,15 @@ module.exports = {
 // Make an HTTP GET request to get a question from a trivia database and return it as a JSON
 async function getQuestion() {
     return new Promise((resolve, reject) => {
-        https.get('https://opentdb.com/api.php?amount=1&type=multiple', res => {
+        // The answer is encoded in Base64 to avoid special characters to be broke
+        https.get('https://opentdb.com/api.php?amount=1&type=multiple&encode=base64', res => {
             let data = [];
             res.on('data', chunk => {
                 data.push(chunk);
             });
 
             res.on('end', () => {
-                const jsonQuestion = JSON.parse(Buffer.concat(data).toString());
+                const jsonQuestion = JSON.parse(Buffer.concat(data).toString('utf-8'));
                 if (jsonQuestion.response_code != 0) {
                     console.log(`Invalid question response code: ${jsonQuestion.response_code}`);
                     reject('{}');
@@ -78,13 +82,13 @@ function createAnswerButtons(jsonQuestion) {
     const answerArray = [];
 
     // Fill and shuffle the answer array
-    answerArray.push(results.correct_answer);
+    answerArray.push(Buffer.from(results.correct_answer, 'base64').toString('utf-8'));
     results.incorrect_answers.forEach(function (answer) {
-        answerArray.push(answer);
+        answerArray.push(Buffer.from(answer, 'base64').toString('utf-8'));
     });
     shuffleArray(answerArray);
 
-    // Creat a button for each answer
+    // Create a button for each answer
     const buttonArray = [];
     answerArray.forEach(function (answer) {
         buttonArray.push(new MessageButton().setCustomId(answer).setLabel(answer).setStyle('PRIMARY'));

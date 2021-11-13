@@ -1,0 +1,17 @@
+{
+    "response_code": 0,
+    "results": [
+        {
+            "category": "RW50ZXJ0YWlubWVudDogVmlkZW8gR2FtZXM=",
+            "type": "bXVsdGlwbGU=",
+            "difficulty": "ZWFzeQ==",
+            "question": "SW4gdGhlIHZpZGVvIGdhbWUgT3ZlcndhdGNoLCB3aGljaCBwbGF5YWJsZSBjaGFyYWN0ZXIgaXMgaW5mYW1vdXMgZm9yIHNheWluZyAiSXQncyBoaWdoIG5vb24uIj8=",
+            "correct_answer": "TWNDcmVl",
+            "incorrect_answers": [
+                "SGFuem8=",
+                "UGhhcmFo",
+                "U29sZGllcjogNzY="
+            ]
+        }
+    ]
+}
