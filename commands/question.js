@@ -20,9 +20,10 @@ module.exports = {
         }
         const question = Buffer.from(jsonQuestion.results[0].question, 'base64').toString('utf-8');
         const correctAnswer = Buffer.from(jsonQuestion.results[0].correct_answer, 'base64').toString('utf-8');
+        let response = `The correct answer was **${correctAnswer}**.`;
 
         // Debug
-        // console.log(`The answer is ${correctAnswer}`);
+        // console.log(response);
 
         // Create the answer buttons and send the question alongside
         const answerButtons = createAnswerButtons(jsonQuestion);
@@ -32,16 +33,31 @@ module.exports = {
         const usersAnswer = [];
         const questionTimeout = 10000;
         const collector = interaction.channel.createMessageComponentCollector({ componentType: 'BUTTON', time: questionTimeout });
-        collector.on('collect', i => {
-            usersAnswer.push(createUserAnswer(i));
-            i.reply({ content: `Your answer ${i.customId} has been registered!`, ephemeral: true });
+
+        // On user answer
+        collector.on('collect', interaction => {
+            // A user cannot answer multiple time
+            let hasAlreadyAnswered = false;
+            for (const userAnswer of usersAnswer) {
+                if (userAnswer.userId === interaction.user.id) {
+                    hasAlreadyAnswered = true;
+                    break;
+                }
+            }
+
+            if (hasAlreadyAnswered) {
+                interaction.reply({ content: `You cannot answer twice!`, ephemeral: true });
+            } else {
+                usersAnswer.push(createUserAnswer(interaction));
+                interaction.reply({ content: `Your answer ${interaction.customId} has been registered!`, ephemeral: true });
+            }
         });
 
-        let response = `The correct answer was **${correctAnswer}**.`;
+        // On question time out
         collector.on('end', () => {
             usersAnswer.forEach(function (userAnswer) {
                 if (userAnswer.answer === correctAnswer) {
-                    response = response.concat('\n', `<@${userAnswer.id}> found the correct answer, **congratulation**!`);
+                    response = response.concat('\n', `<@${userAnswer.userId}> found the correct answer, **congratulation**!`);
                 }
             });
         });
@@ -114,5 +130,5 @@ function shuffleArray(array) {
 
 // Create an user answer object from an answer button click
 function createUserAnswer(interaction) {
-    return { id: interaction.user.id, answer: interaction.customId };
+    return { userId: interaction.user.id, answer: interaction.customId };
 }
