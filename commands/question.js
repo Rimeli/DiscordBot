@@ -37,17 +37,18 @@ module.exports = {
             i.reply({ content: `Your answer ${i.customId} has been registered!`, ephemeral: true });
         });
 
-        let response = `The correct answer was ${correctAnswer}!`;
+        let response = `The correct answer was **${correctAnswer}**.`;
         collector.on('end', () => {
             usersAnswer.forEach(function (userAnswer) {
                 if (userAnswer.answer === correctAnswer) {
-                    response = response.concat('\n', `<@${userAnswer.id}> found the correct answer, congratulation!`);
+                    response = response.concat('\n', `<@${userAnswer.id}> found the correct answer, **congratulation**!`);
                 }
             });
         });
 
         await wait(questionTimeout);
-        interaction.editReply(response);
+        await interaction.editReply('The question has timed up.');
+        await interaction.followUp(response)
     }
 };
 
